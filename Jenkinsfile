@@ -2,7 +2,6 @@ pipeline {
   agent any
 
   environment {
-    // Vous pouvez définir ici des variables d'environnement si nécessaire
     DOCKER_COMPOSE_FILE = 'docker-compose.yml'
   }
 
@@ -16,22 +15,22 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Construction des images Docker...'
-        // Reconstruire les images Docker sans cache (ajustez la commande si nécessaire)
-        sh 'docker-compose build --no-cache'
+        // Utilisez "docker compose" avec un espace pour Docker Compose v2
+        sh 'docker compose build --no-cache'
       }
     }
 
     stage('Test') {
       steps {
         echo 'Exécution des tests (optionnel)...'
-        // Ajoutez ici vos commandes de tests, par exemple : sh 'npm test'
+        // Par exemple, sh 'npm test'
       }
     }
 
     stage('Deploy') {
       steps {
         echo 'Déploiement de l\'application...'
-        sh 'docker-compose up -d'
+        sh 'docker compose up -d'
       }
     }
   }
