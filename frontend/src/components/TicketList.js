@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 function TicketList({ token, role }) {
   const [tickets, setTickets] = useState([]);
 
-  // Fonction pour récupérer la liste des tickets
   const fetchTickets = () => {
     fetch('/tickets', {
       headers: {
@@ -19,15 +18,17 @@ function TicketList({ token, role }) {
     fetchTickets();
   }, [token]);
 
-  // Fonction pour changer le statut d'un ticket via l'endpoint dédié "/tickets/:id/status"
+  // Utiliser updateStatusAndComment pour mettre à jour uniquement le statut et ajouter un commentaire
   const handleChangeStatus = (ticketId, newStatus) => {
+    const newComment = prompt('Entrez votre commentaire pour ce changement de statut:');
+    if (newComment === null) return; // Annulé
     fetch(`/tickets/${ticketId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ statut: newStatus })
+      body: JSON.stringify({ statut: newStatus, commentaires: newComment })
     })
       .then(res => {
         if (!res.ok) {
@@ -37,11 +38,11 @@ function TicketList({ token, role }) {
       })
       .then(data => {
         console.log('Statut mis à jour:', data);
-        // Rafraîchir la liste pour afficher le nouveau statut
         fetchTickets();
       })
       .catch(err => console.error('Erreur lors du changement de statut:', err));
   };
+  
 
   return (
     <div>
@@ -62,11 +63,28 @@ function TicketList({ token, role }) {
               <p><strong>Date de mise à jour:</strong> {new Date(ticket.date_mise_a_jour).toLocaleString()}</p>
               <p><strong>Employé créateur (ID):</strong> {ticket.id_employe}</p>
               <p><strong>Technicien assigné:</strong> {ticket.id_technicien ? ticket.id_technicien : "Non assigné"}</p>
+              <p><strong>Commentaires:</strong> {ticket.commentaires ? ticket.commentaires : "Aucun commentaire"}</p>
               {(role === 'Technicien' || role === 'Admin') && ticket.statut !== 'Fermé' && (
                 <>
-                  <button onClick={() => handleChangeStatus(ticket.id, 'En cours')}>En cours</button>
-                  <button onClick={() => handleChangeStatus(ticket.id, 'Résolu')}>Résolu</button>
-                  <button onClick={() => handleChangeStatus(ticket.id, 'Fermé')}>Fermer</button>
+                  {/* Pour simplifier, on demande un prompt pour saisir un commentaire */}
+                  <button onClick={() => {
+                    const comment = prompt('Entrez votre commentaire pour ce changement de statut:');
+                    if (comment !== null) {
+                      handleChangeStatus(ticket.id, 'En cours', comment);
+                    }
+                  }}>En cours</button>
+                  <button onClick={() => {
+                    const comment = prompt('Entrez votre commentaire pour ce changement de statut:');
+                    if (comment !== null) {
+                      handleChangeStatus(ticket.id, 'Résolu', comment);
+                    }
+                  }}>Résolu</button>
+                  <button onClick={() => {
+                    const comment = prompt('Entrez votre commentaire pour ce changement de statut:');
+                    if (comment !== null) {
+                      handleChangeStatus(ticket.id, 'Fermé', comment);
+                    }
+                  }}>Fermer</button>
                 </>
               )}
             </li>

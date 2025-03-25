@@ -64,7 +64,7 @@ exports.createTicket = (req, res) => {
 // Mettre à jour un ticket (tous les champs)
 exports.updateTicket = (req, res) => {
   const ticketId = parseInt(req.params.id);
-  const { titre, description, statut, priorite, id_employe, id_technicien } = req.body;
+  const { titre, description, statut, priorite, id_employe, id_technicien, commentaires } = req.body;
   const sql = `
     UPDATE tickets 
     SET 
@@ -74,11 +74,12 @@ exports.updateTicket = (req, res) => {
       priorite = ?, 
       date_mise_a_jour = NOW(), 
       id_employe = ?, 
-      id_technicien = ?
+      id_technicien = ?,
+      commentaires = ?
     WHERE id = ?
   `;
   
-  db.query(sql, [titre, description, statut, priorite, id_employe, id_technicien, ticketId], (err, result) => {
+  db.query(sql, [titre, description, statut, priorite, id_employe, id_technicien, commentaires, ticketId], (err, result) => {
     if (err) {
       console.error('Erreur lors de la mise à jour du ticket :', err);
       return res.status(500).json({ error: 'Erreur lors de la mise à jour du ticket.' });
@@ -89,6 +90,7 @@ exports.updateTicket = (req, res) => {
     res.json({ message: 'Ticket mis à jour avec succès.' });
   });
 };
+
 
 // Nouvel endpoint pour mettre à jour uniquement le statut d'un ticket
 exports.updateStatus = (req, res) => {
@@ -133,3 +135,29 @@ exports.deleteTicket = (req, res) => {
     res.status(204).send();
   });
 };
+
+// Mettre à jour uniquement le statut et le commentaire d'un ticket
+exports.updateStatusAndComment = (req, res) => {
+  const ticketId = parseInt(req.params.id);
+  console.log('Requête reçue pour updateStatusAndComment:', req.body);
+  const { statut, commentaires } = req.body;
+  if (!statut) {
+    return res.status(400).json({ error: 'Le champ "statut" est requis.' });
+  }
+  const sql = `
+    UPDATE tickets
+    SET statut = ?, commentaires = ?, date_mise_a_jour = NOW()
+    WHERE id = ?
+  `;
+  db.query(sql, [statut, commentaires, ticketId], (err, result) => {
+    if (err) {
+      console.error('Erreur lors de la mise à jour:', err);
+      return res.status(500).json({ error: 'Erreur lors de la mise à jour du ticket.' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Ticket non trouvé.' });
+    }
+    res.json({ message: 'Statut et commentaire mis à jour avec succès.' });
+  });
+};
+
