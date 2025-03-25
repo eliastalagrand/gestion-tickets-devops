@@ -2,12 +2,13 @@ pipeline {
   agent any
 
   environment {
-    DOCKER_COMPOSE_FILE = 'docker-compose.yml'
+    DOCKER_COMPOSE_FILE = "docker-compose.yml"
   }
 
   stages {
     stage('Checkout') {
       steps {
+        // Récupère le code depuis votre dépôt Git
         checkout scm
       }
     }
@@ -15,7 +16,7 @@ pipeline {
     stage('Build') {
       steps {
         echo 'Construction des images Docker...'
-        // Utilisez "docker compose" avec un espace pour Docker Compose v2
+        // Exécuter la commande Docker Compose (v2) pour construire les images
         sh 'docker compose build --no-cache'
       }
     }
@@ -23,13 +24,14 @@ pipeline {
     stage('Test') {
       steps {
         echo 'Exécution des tests (optionnel)...'
-        // Par exemple, sh 'npm test'
+        // Exemple : sh 'npm test'
       }
     }
 
     stage('Deploy') {
       steps {
         echo 'Déploiement de l\'application...'
+        // Lancement des conteneurs en arrière-plan
         sh 'docker compose up -d'
       }
     }
