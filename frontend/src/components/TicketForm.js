@@ -4,9 +4,9 @@ function TicketForm({ onTicketCreated, token }) {
   const [formData, setFormData] = useState({
     titre: '',
     description: '',
-    statut: 'Ouvert',
-    priorite: 'Faible',
-    id_employe: 1 // Vous pouvez changer cette valeur selon l'utilisateur connecté
+    statut: 'Ouvert',    // Statut fixé à "Ouvert" par défaut lors de la création
+    priorite: 'Faible',   // Champ Priorité avec valeur par défaut
+    id_employe: 1         // Id de l'employé (à adapter selon l'utilisateur connecté)
   });
   const [message, setMessage] = useState('');
 
@@ -21,7 +21,6 @@ function TicketForm({ onTicketCreated, token }) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Ajouter le token dans le header si la route est protégée
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(formData)
@@ -71,9 +70,18 @@ function TicketForm({ onTicketCreated, token }) {
             value={formData.description} 
             onChange={handleChange} 
             required 
-          ></textarea>
+          />
         </div>
-        {/* Vous pouvez ajouter ici d'autres champs si nécessaire (statut, priorité, etc.) */}
+        <div>
+          <label>Priorité :</label>
+          <select name="priorite" value={formData.priorite} onChange={handleChange}>
+            <option value="Faible">Faible</option>
+            <option value="Moyenne">Moyenne</option>
+            <option value="Élevée">Élevée</option>
+            <option value="Critique">Critique</option>
+          </select>
+        </div>
+        {/* Le statut est fixé à "Ouvert" par défaut et ne peut pas être modifié ici */}
         <button type="submit">Créer le Ticket</button>
       </form>
     </div>

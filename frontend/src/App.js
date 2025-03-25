@@ -7,6 +7,7 @@ import TicketForm from './components/TicketForm';
 import AdminDashboard from './components/AdminDashboard';
 import TechnicianDashboard from './components/TechnicianDashboard';
 import EmployeeDashboard from './components/EmployeeDashboard';
+import Header from './components/Header';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token') || null);
@@ -14,26 +15,33 @@ function App() {
   const [refreshTickets, setRefreshTickets] = useState(false);
 
   let userRole = null;
+  let userEmail = null;
   if (token) {
     try {
       const decoded = jwtDecode(token);
-      userRole = decoded.role; // Assurez-vous que c'est la valeur attendue (p. ex. "Admin", "Technicien", "Employ" ou "Employé")
+      userRole = decoded.role; // Ex: "Admin", "Technicien", "Employ" (ou "Employé")
+      userEmail = decoded.email;
     } catch (error) {
       console.error('Erreur lors du décodage du token :', error);
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  };
+
   const toggleRegister = () => {
     setShowRegister(prev => !prev);
   };
 
-  // Fonction pour rafraîchir la liste des tickets après création/modification
   const handleTicketCreated = (newTicket) => {
     setRefreshTickets(prev => !prev);
   };
 
   return (
     <div className="App">
+      {token && <Header onLogout={handleLogout} userEmail={userEmail} />}
       <h1>Plateforme de Gestion des Tickets</h1>
       {!token ? (
         <>
@@ -52,11 +60,29 @@ function App() {
       ) : (
         <>
           <p>Connecté avec succès !</p>
-          {userRole === 'Admin' && <AdminDashboard />}
-          {userRole === 'Technicien' && <TechnicianDashboard />}
-          {(userRole === 'Employ' || userRole === 'Employé') && <EmployeeDashboard />}
-          <TicketForm token={token} onTicketCreated={handleTicketCreated} />
-          <TicketList key={refreshTickets} token={token} />
+          {userRole === 'Admin' && (
+            <>
+              <AdminDashboard />
+              {/* Pour Admin, on peut afficher toutes les fonctionnalités */}
+              <TicketForm token={token} onTicketCreated={handleTicketCreated} />
+              <TicketList key={refreshTickets} token={token} role={userRole} />
+            </>
+          )}
+          {userRole === 'Technicien' && (
+            <>
+              <TechnicianDashboard />
+              {/* Pour Technicien, on n'affiche pas le formulaire de création */}
+              <TicketList key={refreshTickets} token={token} role={userRole} />
+              {/* Vous pouvez ici ajouter des boutons "Mettre à jour" ou "Fermer" dans TicketList */}
+            </>
+          )}
+          {(userRole === 'Employ' || userRole === 'Employé') && (
+            <>
+              <EmployeeDashboard />
+              <TicketForm token={token} onTicketCreated={handleTicketCreated} />
+              <TicketList key={refreshTickets} token={token} role={userRole} />
+            </>
+          )}
         </>
       )}
     </div>
