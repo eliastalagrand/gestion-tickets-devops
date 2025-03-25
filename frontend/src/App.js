@@ -7,6 +7,7 @@ import TicketForm from './components/TicketForm';
 import AdminDashboard from './components/AdminDashboard';
 import TechnicianDashboard from './components/TechnicianDashboard';
 import EmployeeDashboard from './components/EmployeeDashboard';
+import UserManagement from './components/UserManagement';
 import Header from './components/Header';
 
 function App() {
@@ -35,7 +36,7 @@ function App() {
     setShowRegister(prev => !prev);
   };
 
-  const handleTicketCreated = (newTicket) => {
+  const handleTicketCreated = () => {
     setRefreshTickets(prev => !prev);
   };
 
@@ -62,23 +63,23 @@ function App() {
           <p>Connecté avec succès !</p>
           {userRole === 'Admin' && (
             <>
-              <AdminDashboard />
-              {/* Pour Admin, on peut afficher toutes les fonctionnalités */}
+              <AdminDashboard token={token} />
+              {/* Gestion des utilisateurs */}
+              <UserManagement token={token} />
+              {/* Pour Admin, on affiche également la création et la liste des tickets */}
               <TicketForm token={token} onTicketCreated={handleTicketCreated} />
               <TicketList key={refreshTickets} token={token} role={userRole} />
             </>
           )}
           {userRole === 'Technicien' && (
             <>
-              <TechnicianDashboard />
-              {/* Pour Technicien, on n'affiche pas le formulaire de création */}
+              <TechnicianDashboard token={token} />
               <TicketList key={refreshTickets} token={token} role={userRole} />
-              {/* Vous pouvez ici ajouter des boutons "Mettre à jour" ou "Fermer" dans TicketList */}
             </>
           )}
           {(userRole === 'Employ' || userRole === 'Employé') && (
             <>
-              <EmployeeDashboard />
+              <EmployeeDashboard token={token} />
               <TicketForm token={token} onTicketCreated={handleTicketCreated} />
               <TicketList key={refreshTickets} token={token} role={userRole} />
             </>
