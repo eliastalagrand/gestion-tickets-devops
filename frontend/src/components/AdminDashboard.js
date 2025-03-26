@@ -12,7 +12,7 @@ function AdminDashboard({ token }) {
 
   // Récupérer la liste des utilisateurs
   const fetchUsers = () => {
-    fetch('/users', {  // Assurez-vous que cet endpoint existe
+    fetch('/users', {  
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -30,7 +30,7 @@ function AdminDashboard({ token }) {
       .catch(err => console.error('Erreur lors de la récupération des tickets:', err));
   };
 
-  // Récupérer les statistiques (implémentez cet endpoint côté backend)
+  // Récupérer les statistiques 
   const fetchStats = () => {
     fetch('/stats', {
       headers: { 'Authorization': `Bearer ${token}` }
@@ -48,7 +48,7 @@ function AdminDashboard({ token }) {
 
   // Suppression d'un utilisateur
   const handleDeleteUser = (userId) => {
-    fetch(`/users/${userId}`, {  // Assurez-vous que cet endpoint DELETE existe
+    fetch(`/users/${userId}`, {  
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     })
@@ -90,7 +90,7 @@ function AdminDashboard({ token }) {
             <li key={user.id}>
               {user.nom} ({user.role}) - {user.email}
               <button onClick={() => handleDeleteUser(user.id)}>Supprimer</button>
-              {/* Vous pouvez ajouter ici un formulaire pour modifier le rôle ou ajouter un nouvel utilisateur */}
+              {/*formulaire pour modifier le rôle ou ajouter un nouvel utilisateur */}
             </li>
           ))}
         </ul>

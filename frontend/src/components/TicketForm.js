@@ -6,7 +6,7 @@ function TicketForm({ onTicketCreated, token }) {
     description: '',
     statut: 'Ouvert',    // Statut fixé à "Ouvert" par défaut lors de la création
     priorite: 'Faible',   // Champ Priorité avec valeur par défaut
-    id_employe: 1         // Id de l'employé (à adapter selon l'utilisateur connecté)
+    id_employe: 1         // Id de l'employé 
   });
   const [message, setMessage] = useState('');
 

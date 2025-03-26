@@ -1,4 +1,3 @@
-// src/components/UserManagement.js
 import React from 'react';
 
 function UserManagement({ token }) {

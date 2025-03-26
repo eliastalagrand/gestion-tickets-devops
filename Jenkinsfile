@@ -10,6 +10,7 @@ pipeline {
       steps {
         // Récupère le code depuis votre dépôt Git
         checkout scm
+        bat 'git clone https://github.com/eliastalagrand/gestion-tickets-devops.git'
       }
     }
 
